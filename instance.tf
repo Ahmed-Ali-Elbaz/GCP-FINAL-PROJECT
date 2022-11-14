@@ -6,8 +6,8 @@ resource "google_project_service" "compute" {
 }
 
 
-resource "google_compute_instance" "my-instance" {
-  name         = "my-instance"
+resource "google_compute_instance" "bastion" {
+  name         = "bastion-host"
   machine_type = "e2-medium"
   zone         = "us-central1-a"
 

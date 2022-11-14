@@ -12,6 +12,8 @@ resource "google_container_cluster" "private-cluster" {
   initial_node_count = 1
   network = google_compute_network.vpc_network.self_link
   subnetwork = google_compute_subnetwork.restricted-subnet.self_link
+  networking_mode = "VPC_NAITVE"
+  
 
 #  logging_service = "logging.gogleapis.com/kubernetes" # Collect logs from each node
 #  monitoring_service = "monitoring.googleapis.com/kubernetes"
@@ -85,7 +87,7 @@ resource "google_container_node_pool" "nodepool" {
   node_config {
 
     preemptible = false
-    machine_type = "e2-small"
+    machine_type = "e2-standard-2"
 
     labels = {
       role = "general"
