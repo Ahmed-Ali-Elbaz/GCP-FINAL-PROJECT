@@ -22,5 +22,17 @@ resource "google_compute_router_nat" "nat" {
         source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
     }
 
+    nat_ips = [google_compute_address.nat_ip.self_link]
+
+
 }
 
+resource "google_compute_address" "nat_ip" {
+  
+  name = "nat_ip"
+  address_type = "EXTERNAL"
+  network_tier = "PREMIUM"
+
+  depends_on = [google_project_service.compute]
+
+}

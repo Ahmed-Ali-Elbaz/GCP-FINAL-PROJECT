@@ -1,3 +1,11 @@
+
+resource "google_project_service" "compute" {
+  
+  service = "compute.googleapis.com"
+
+}
+
+
 resource "google_compute_instance" "my-instance" {
   name         = "my-instance"
   machine_type = "e2-medium"
