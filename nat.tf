@@ -13,7 +13,7 @@ resource "google_compute_router_nat" "nat" {
   name                               = "my-router-nat"
   router                             = google_compute_router.nat-router.name
   region                             = google_compute_router.nat-router.region
-  nat_ip_allocate_option             = "AUTO_ONLY"
+  nat_ip_allocate_option             = "MANUAL_ONLY"
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
 
@@ -22,14 +22,14 @@ resource "google_compute_router_nat" "nat" {
         source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
     }
 
-    nat_ips = [google_compute_address.nat_ip.self_link]
+    nat_ips = [google_compute_address.nat-ip.self_link]
 
 
 }
 
-resource "google_compute_address" "nat_ip" {
+resource "google_compute_address" "nat-ip" {
   
-  name = "nat_ip"
+  name = "nat-ip"
   address_type = "EXTERNAL"
   network_tier = "PREMIUM"
 
