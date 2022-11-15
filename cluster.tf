@@ -1,18 +1,12 @@
 
-resource "google_project_service" "container" {
-  
-  service = "container.googleapis.com"
-
-}
-
 resource "google_container_cluster" "private-cluster" {
-  name               = "marcellus-wallace"
+  name               = "private-cluster"
   location           = "us-central1-a"
   remove_default_node_pool = true
   initial_node_count = 1
   network = google_compute_network.vpc_network.self_link
   subnetwork = google_compute_subnetwork.restricted-subnet.self_link
-  networking_mode = "VPC_NAITVE"
+
   
 
 #  logging_service = "logging.gogleapis.com/kubernetes" # Collect logs from each node
