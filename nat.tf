@@ -33,6 +33,5 @@ resource "google_compute_address" "nat-ip" {
   address_type = "EXTERNAL"
   network_tier = "PREMIUM"
 
-  depends_on = [google_project_service.compute]
 
 }
