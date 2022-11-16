@@ -1,68 +1,67 @@
 pipeline {
+    agent {label "slave"}
 
-    agent any
+    stages {
 
-    environment {
-
-        registry = "ahmedhedihed/helloworld"
-        registryCredential = "dockerhub"
-    }
-
-    stages{
-
-        stage('Build App Image') {
-          steps {
-            script {
-              dockerImage = docker.build registry + ":V$BUILD_NUMBER"
-            }
-          }
-        }
-
-
-        stage('Upload Image'){
-          steps{
-            script {
-              docker.withRegistry('', registryCredential) {
-                dockerImage.push("V$BUILD_NUMBER")
-
-              }
-            }
-          }
-        }
-
-
-
-        // CD Stage
-        stage('Deploy App on GKE cluster') {
+        // CI Stage
+        stage('Ci') {
             steps {
 
-                withCredentials([file(credentialsId: 'cluster', variable: 'kubecfg')]){
+ 
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) { 
+                    
+                    sh """
+                        
+                        docker build .  -t ahmedhedihed/bakehouse:$BUILD_NUMBER
+                        docker login -u ${USERNAME} -p ${PASSWORD}
+                        docker push ahmedhedihed/bakehouse:$BUILD_NUMBER
+                        
+                    """
+                    
+                    }
+
+            }
+
+
+
+        }
+
+
+
+
+
+        
+        stage('Deploy app on GKE cluster') {
+            steps {
+
+                   
+                withCredentials([file(credentialsId: 'cluster', variable: 'serviceAcc')]){
 
                     sh """
-                            export BUILD_NUMBER=\$(cat ../build-num.txt)
-                            mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
-                            cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
-                            rm -f Deployment/deploy.yaml.tmp
-                            kubectl apply --kubeconfig=${kubecfg} -f Deployment
 
-                      """
-  
+                            gcloud auth activate-service-account --key-file="$serviceAcc"
+                            gcloud container clusters get-credentials private-cluster --zone us-central1-a --project wired-sol-367809 
+                            sed -i 's/tagversion/${env.BUILD_NUMBER}/g' Deployment/deploy.yaml
+                            kubectl apply  -f Deployment -n jenkins
+
+                       """
+
+                        
+                    
                 }
-
-                 
+                    
             }     
 
             
-        }   
+        }     
+   
 
-
+   
+   
+        
+        
+        
+        
+        
     }
-
-
 }
-
-
-
-
-
-

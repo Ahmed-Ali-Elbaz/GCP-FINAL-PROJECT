@@ -1,11 +1,4 @@
 
-resource "google_project_service" "compute" {
-  
-  service = "compute.googleapis.com"
-
-}
-
-
 resource "google_compute_instance" "bastion" {
   name         = "bastion-host"
   machine_type = "e2-medium"
@@ -22,6 +15,8 @@ resource "google_compute_instance" "bastion" {
       }
     }
     
+
+    
   }
 
 
@@ -37,4 +32,6 @@ resource "google_compute_instance" "bastion" {
     email  = google_service_account.service_account.email
     scopes = ["cloud-platform"]
   }
+
+
 }
